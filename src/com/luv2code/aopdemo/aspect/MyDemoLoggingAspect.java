@@ -1,12 +1,16 @@
 package com.luv2code.aopdemo.aspect;
 
+import java.util.List;
+
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import com.luv2code.aopdemo.Account;
 import com.luv2code.aopdemo.dao.AccountDAO;
 
 @Aspect
@@ -14,10 +18,24 @@ import com.luv2code.aopdemo.dao.AccountDAO;
 @Order(0)
 public class MyDemoLoggingAspect {
 	
-	//this is where we add all of our related advices for logging
+	// add a new advice for @AfterReturning on the findAccounts method
 	
-	//create a pointcut to getters
-	 
+	@AfterReturning(
+			pointcut="execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))",
+			returning="result"
+			)
+	public void afterReturningFindAccountsAdvice(
+		JoinPoint theJoinPoint, List<Account> result) {
+		
+		// print out which method we are advising on
+		String method = theJoinPoint.getSignature().toShortString();
+		System.out.println("\n==========================>>> Executing @AfterReturning on method: " + method);
+		//print out the results of the methods call
+		System.out.println("\n==========================>>> result is: : " + result);
+
+		
+		
+	}
 	
 	@Before("com.luv2code.aopdemo.aspect.AopExpessions.finalpointcut()")
 	public void beforeAddAcoountAdvice(JoinPoint theJoinPoint) {

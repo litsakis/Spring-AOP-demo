@@ -23,14 +23,14 @@ public class MainDemoApp {
 				context.getBean("membershipDAO", MembershipDAO.class);
 		
 		// call the business method
-		theAccountDAO.addAccount();
+	
 		
 		
 		//call the membership busisness method
 		theMembershipDAO.addAccount();
 		
-		theAccountDAO.setName("foobar");
-		theAccountDAO.setServiceCode("selver");
+		//theAccountDAO.setName("foobar");
+	//	theAccountDAO.setServiceCode("selver");
 		
 		
 		String name=theAccountDAO.getName();
