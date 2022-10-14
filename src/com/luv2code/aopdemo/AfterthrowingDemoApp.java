@@ -28,7 +28,7 @@ public class AfterthrowingDemoApp {
 		try {
 			
 			//add a boolean flag to simulate exceptions
-			boolean tripWire = true;
+			boolean tripWire = false;
 			theAccounts = theAccountDAO.findAccounts(tripWire);
 
 		}
@@ -37,6 +37,8 @@ public class AfterthrowingDemoApp {
 			System.out.println("\n\n Main Program ... caught exception: "+exc);
 			
 		}
+		
+		
 		//display the accounts
 		
 		System.out.println("\n\n Main Program: AfterThrowingDemoAPP");

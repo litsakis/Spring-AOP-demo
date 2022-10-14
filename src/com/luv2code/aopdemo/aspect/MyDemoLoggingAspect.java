@@ -1,10 +1,14 @@
 package com.luv2code.aopdemo.aspect;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -18,6 +22,47 @@ import com.luv2code.aopdemo.dao.AccountDAO;
 @Component
 @Order(0)
 public class MyDemoLoggingAspect {
+	
+	
+	private Logger myLogger = Logger.getLogger(getClass().getName());
+	
+	@Around("execution(* com.luv2code.aopdemo.service.*.getFortune(..))")	
+	public Object arroundGetFortune(
+			ProceedingJoinPoint theProceedingJoinPoint) throws Throwable {
+		// print out method we are advising on
+		String method = theProceedingJoinPoint.getSignature().toShortString();
+		myLogger.info("\n==========================>>>Executing  @Around on method: " + method);
+		//get begin timestamp
+		long begin = System.currentTimeMillis();
+		//new, let's execute the method
+		Object result = theProceedingJoinPoint.proceed();
+		// get end timestamp
+		long stop = System.currentTimeMillis();
+
+		//compute
+		myLogger.info("Duration= "+ (stop-begin)/1000.0 +" second");
+		
+		return result;
+	}
+	
+	
+	
+	
+	@After("execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))"	
+			)
+	public void afterFinallyFindAccountsAdvice(JoinPoint theJoinPoint){
+		myLogger.info("\\n===================>>>>>>>  Executing @after()");
+		String method = theJoinPoint.getSignature().toShortString();
+		myLogger.info("\n==========================>>>Executing  " + method);
+		
+		
+		
+	}
+	
+	
+	
+	
+	
 	@AfterThrowing(
 		pointcut="execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))",
 		throwing="theExc"
@@ -25,9 +70,9 @@ public class MyDemoLoggingAspect {
 			)
 	public void afterThrowingFindAccountAdvice(JoinPoint theJoinPoint, Throwable theExc) {
 		//
-		System.out.println("\\n===================>>>>>>>  Executing @afterThrowingFindAccountAdvice()");
+		myLogger.info("\\n===================>>>>>>>  Executing @afterThrowingFindAccountAdvice()");
 		String method = theJoinPoint.getSignature().toShortString();
-		System.out.println("\n==========================>>> Th e exception is  " + theExc);
+		myLogger.info("\n==========================>>> Th e exception is  " + theExc);
 	}
 	@AfterReturning(
 			pointcut="execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))",
@@ -38,9 +83,9 @@ public class MyDemoLoggingAspect {
 		
 		// print out which method we are advising on
 		String method = theJoinPoint.getSignature().toShortString();
-		System.out.println("\n==========================>>> Executing @AfterReturning on method: " + method);
+		myLogger.info("\n==========================>>> Executing @AfterReturning on method: " + method);
 		//print out the results of the methods call
-		System.out.println("\n==========================>>> result is: : " + result);
+		myLogger.info("\n==========================>>> result is: : " + result);
 
 		
 		
@@ -49,14 +94,14 @@ public class MyDemoLoggingAspect {
 	@Before("com.luv2code.aopdemo.aspect.AopExpessions.finalpointcut()")
 	public void beforeAddAcoountAdvice(JoinPoint theJoinPoint) {
 		
-		System.out.println("\n===================>>>>>>>  Executing @beforeAddAcoountAdvice()");
+		myLogger.info("\n===================>>>>>>>  Executing @beforeAddAcoountAdvice()");
 		
 		
 		
 		//display the method signature
 		MethodSignature methodSig = (MethodSignature) theJoinPoint.getSignature();
 		
-		System.out.println("Method: "+methodSig);
+		myLogger.info("Method: "+methodSig);
 		
 		//display the method arguments
 		//get args
@@ -66,7 +111,7 @@ public class MyDemoLoggingAspect {
 		//loop thru arg
 				
 				for (Object tempArg : args) {
-					System.out.println(tempArg);
+					myLogger.info(tempArg.toString());
 					
 					
 					if (tempArg instanceof AccountDAO) {
